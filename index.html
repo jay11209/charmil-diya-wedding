@@ -832,6 +832,52 @@
 </footer>
 
 <script>
+(function () {
+
+  // Splash dismiss
+  setTimeout(function () {
+    var splash = document.getElementById('splash');
+    if (splash) splash.classList.add('hide');
+  }, 2700);
+
+  // Nav scroll
+  var nav = document.getElementById('navbar');
+  window.addEventListener('scroll', function () {
+    if (nav) nav.classList.toggle('scrolled', window.scrollY > 50);
+  }, { passive: true });
+
+  // Mobile nav toggle
+  var menuBtn = document.getElementById('menuBtn');
+  var navLinks = document.getElementById('navLinks');
+  if (menuBtn && navLinks) {
+    menuBtn.addEventListener('click', function () { navLinks.classList.toggle('open'); });
+    navLinks.querySelectorAll('a').forEach(function (a) {
+      a.addEventListener('click', function () { navLinks.classList.remove('open'); });
+    });
+  }
+
+  // Reveal on scroll
+  var revealEls = document.querySelectorAll('.reveal');
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) {
+      if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+    });
+  }, { threshold: 0.12 });
+  revealEls.forEach(function (el) { io.observe(el); });
+
+  // Countdown to 19 July 2026 08:00 IST
+  var weddingDate = new Date('2026-07-19T08:00:00+05:30').getTime();
+  function pad(n) { return String(n).padStart(2, '0'); }
+  function tick() {
+    var diff = Math.max(0, weddingDate - Date.now());
+    var el;
+    el = document.getElementById('cd-d'); if (el) el.textContent = pad(Math.floor(diff / 86400000));
+    el = document.getElementById('cd-h'); if (el) el.textContent = pad(Math.floor(diff % 86400000 / 3600000));
+    el = document.getElementById('cd-m'); if (el) el.textContent = pad(Math.floor(diff % 3600000 / 60000));
+    el = document.getElementById('cd-s'); if (el) el.textContent = pad(Math.floor(diff % 60000 / 1000));
+  }
+  tick();
+  setInterval(tick, 1000);
 
   // Floating petals
   var canvas = document.getElementById('petal-canvas');
@@ -856,7 +902,6 @@
       rot: Math.random() * Math.PI * 2,
       drot: (Math.random() - .5) * .025,
       a: .2 + Math.random() * .35,
-      // alternate saffron / crimson / gold petals
       hue: [0, 14, 340, 38][Math.floor(Math.random() * 4)],
       sat: 75 + Math.random() * 20,
       lit: 55 + Math.random() * 20
